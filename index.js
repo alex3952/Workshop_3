@@ -43,11 +43,11 @@ async function main() {
     }
 
     console.log("\n=== MONTHLY QUOTE ===");
-    console.log(Subtotal:             $${quote.subtotal.toFixed(2)});
-    console.log(Group discount:      -$${quote.groupDiscount.toFixed(2)});
-    console.log(Special discount:    -$${quote.specialDiscount.toFixed(2)});
-    console.log(Premium surcharge:    $${quote.premiumSurcharge.toFixed(2)});
-    console.log(Total:                $${quote.total});
+    console.log(`Subtotal:    $${quote.subtotal.toFixed(2)}`);
+    console.log(`Group discount:   -$${quote.groupDiscount.toFixed(2)}`);
+    console.log(`Special discount: -$${quote.specialDiscount.toFixed(2)}`);
+    console.log(`Premium surcharge: $${quote.premiumSurcharge.toFixed(2)}`);
+    console.log(`Total:             $${quote.total}`);
 
     const confirmation = (
       await rl.question("\nConfirm quote? (y/n): ")
@@ -58,9 +58,9 @@ async function main() {
       return;
     }
 
-    console.log(Quote confirmed. Monthly total: $${quote.total});
+    console.log(`Quote confirmed. Monthly total: $${quote.total}`);
   } catch (error) {
-    console.log(Error: ${error.message});
+    console.log(`Error: ${error.message}`);
     console.log("Total: -1");
   } finally {
     rl.close();

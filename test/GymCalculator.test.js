@@ -23,3 +23,17 @@ test("BASIC con SPA es inválido", () => {
 
   assert.equal(result, -1);
 });
+
+describe("R4 descuento grupal", () => {
+  test("con 1 miembro no hay descuento", () => {
+    assert.equal(calc("STANDARD", [], 1), 45);
+  });
+
+  test("con 2 miembros se aplica 10% (90 -> 81)", () => {
+    assert.equal(calc("BASIC", ["GROUP_CLASSES"], 2), 81);
+  });
+
+  test("con 3 miembros se aplica 10% y se redondea half up (121.5 -> 122)", () => {
+    assert.equal(calc("BASIC", ["GROUP_CLASSES"], 3), 122);
+  });
+});

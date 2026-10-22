@@ -38,18 +38,9 @@ class GymCalculator {
 
     let total = subtotal;
 
+    // R4. Descuento grupal
     if (members >= 2) {
       total -= total * 0.10;
-    }
-
-    if (total > 400) {
-      total -= 50;
-    } else if (total > 200) {
-      total -= 20;
-    }
-
-    if (hasPremium) {
-      total += total * 0.15;
     }
 
     return Math.floor(total + 0.5);

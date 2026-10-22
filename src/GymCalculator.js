@@ -51,7 +51,7 @@ class GymCalculator {
       (extra) => Object.hasOwn(this.EXTRAS, extra) && this.EXTRAS[extra].premium
     );
   }
-
+   
   // R3: subtotal = (plan + extras) x miembros, o null si algo es inválido
   static calculateSubtotal(plan, extras, members) {
     const planPrice = this.getPlanPrice(plan);

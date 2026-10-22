@@ -19,6 +19,9 @@
   },
   "homepage": "https://github.com/alex3952/Workshop_3#readme",
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.13.0",
+    "globals": "^17.13.0",
     "jest": "^30.5.2",
     "jest-junit": "^17.0.0"
   }

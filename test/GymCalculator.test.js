@@ -5,7 +5,7 @@ const GymCalculator = require("../src/GymCalculator");
 test("BASIC sin extras para un miembro cuesta 30", () => {
   const result = GymCalculator.calculate("BASIC", [], 1);
 
-  assert.equal(result, 30);
+  assert.equal(result.total, 30);
 });
 
 test("STANDARD con PERSONAL_TRAINING cuesta 70", () => {
@@ -15,7 +15,7 @@ test("STANDARD con PERSONAL_TRAINING cuesta 70", () => {
     1
   );
 
-  assert.equal(result, 70);
+  assert.equal(result.total, 70);
 });
 
 test("BASIC con SPA es inválido", () => {
@@ -36,4 +36,5 @@ describe("R4 descuento grupal", () => {
   test("con 3 miembros se aplica 10% y se redondea half up (121.5 -> 122)", () => {
     assert.equal(calc("BASIC", ["GROUP_CLASSES"], 3), 122);
   });
+  assert.equal(result.total, -1);
 });

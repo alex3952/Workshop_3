@@ -12,38 +12,114 @@ class GymCalculator {
     SPECIALIZED_PROGRAM: { price: 40, premium: true },
   };
 
-  static calculate(plan, extras, members) {
-    if (!this.PLANS[plan] ||
-        !Array.isArray(extras) ||
-        !Number.isInteger(members) ||
-        members < 1) {
-      return -1;
+  // R1: devuelve el precio del plan, o null si el plan no existe
+  static getPlanPrice(plan) {
+    return Object.hasOwn(this.PLANS, plan) ? this.PLANS[plan] : null;
+  }
+
+  // R2: devuelve la suma de los extras, o null si la selección es inválida
+  // (extra desconocido, extra repetido o extra premium sin plan PREMIUM)
+  static getExtrasPrice(plan, extras) {
+    if (!Array.isArray(extras)) {
+      return null;
     }
 
-    let extrasPrice = 0;
-    let hasPremium = false;
+    if (new Set(extras).size !== extras.length) {
+      return null;
+    }
+
+    let total = 0;
 
     for (const extra of extras) {
-      const item = this.EXTRAS[extra];
-
-      if (!item || (item.premium && plan !== "PREMIUM")) {
-        return -1;
+      if (!Object.hasOwn(this.EXTRAS, extra)) {
+        return null;
       }
 
-      extrasPrice += item.price;
-      if (item.premium) hasPremium = true;
+      if (this.EXTRAS[extra].premium && plan !== "PREMIUM") {
+        return null;
+      }
+
+      total += this.EXTRAS[extra].price;
     }
 
-    const subtotal = (this.PLANS[plan] + extrasPrice) * members;
+    return total;
+  }
 
-    let total = subtotal;
+  // R2: indica si hay al menos un extra premium (lo usa R6)
+  static hasPremiumExtra(extras) {
+    return extras.some(
+      (extra) => Object.hasOwn(this.EXTRAS, extra) && this.EXTRAS[extra].premium
+    );
+  }
+   
+  // R3: subtotal = (plan + extras) x miembros, o null si algo es inválido
+  static calculateSubtotal(plan, extras, members) {
+    const planPrice = this.getPlanPrice(plan);
+    const extrasPrice = this.getExtrasPrice(plan, extras);
 
-    // R4. Descuento grupal
-    if (members >= 2) {
-      total -= total * 0.10;
+    if (planPrice === null || extrasPrice === null) {
+      return null;
     }
 
-    return Math.floor(total + 0.5);
+    if (!Number.isInteger(members) || members < 1) {
+      return null;
+    }
+
+    return (planPrice + extrasPrice) * members;
+  }
+
+  // R7: redondeo mitad hacia arriba a entero. Primero se pasa a centavos
+  // para corregir errores de coma flotante (ej. 121.49999999999999 -> 122)
+  static roundHalfUp(amount) {
+    const cents = Math.round(amount * 100);
+    return Math.floor((cents + 50) / 100);
+  }
+
+  static calculate(plan, extras, members) {
+    // R1, R2 y R3: validar la selección y calcular el subtotal
+    const subtotal = this.calculateSubtotal(plan, extras, members);
+
+    if (subtotal === null) {
+      return { valid: false, total: -1 }; // R7: selección inválida
+    }
+
+    // R4: descuento grupal del 10 %
+    const groupDiscount =
+      members >= 2 ? subtotal * 0.10 : 0;
+
+    const afterGroupDiscount = subtotal - groupDiscount;
+
+    // R5: oferta especial, solo una
+    let specialDiscount = 0;
+
+    if (afterGroupDiscount > 400) {
+      specialDiscount = 50;
+    } else if (afterGroupDiscount > 200) {
+      specialDiscount = 20;
+    }
+
+    const afterSpecialDiscount =
+      afterGroupDiscount - specialDiscount;
+
+    // R6: recargo del 15 % si hay extras premium
+    const premiumSurcharge = this.hasPremiumExtra(extras)
+      ? afterSpecialDiscount * 0.15
+      : 0;
+
+    const amount =
+      afterSpecialDiscount + premiumSurcharge;
+
+    // R7: redondear solo al final
+    const total = this.roundHalfUp(amount);
+
+    return {
+      valid: true,
+      subtotal,
+      groupDiscount,
+      specialDiscount,
+      premiumSurcharge,
+      total,
+    };
   }
 }
 

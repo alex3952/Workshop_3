@@ -17,5 +17,9 @@
   "bugs": {
     "url": "https://github.com/alex3952/Workshop_3/issues"
   },
-  "homepage": "https://github.com/alex3952/Workshop_3#readme"
+  "homepage": "https://github.com/alex3952/Workshop_3#readme",
+  "devDependencies": {
+    "jest": "^30.5.2",
+    "jest-junit": "^17.0.0"
+  }
 }

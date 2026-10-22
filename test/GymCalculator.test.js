@@ -1,50 +1,27 @@
-
 const { test, describe } = require("node:test");
 const assert = require("node:assert/strict");
 const GymCalculator = require("../src/GymCalculator");
 
-test("BASIC sin extras para un miembro cuesta 30", () => {
-  const result = GymCalculator.calculate("BASIC", [], 1);
+describe("R9: Tabla oficial de pruebas completa", () => {
+  const officialTable = [
+    { plan: "BASIC", extras: [], members: 1, expected: 30 },
+    { plan: "STANDARD", extras: ["PERSONAL_TRAINING"], members: 1, expected: 70 },
+    { plan: "BASIC", extras: ["GROUP_CLASSES"], members: 2, expected: 81 },
+    { plan: "BASIC", extras: ["GROUP_CLASSES"], members: 3, expected: 122 },
+    { plan: "STANDARD", extras: ["GROUP_CLASSES", "PERSONAL_TRAINING"], members: 4, expected: 286 },
+    { plan: "PREMIUM", extras: ["GROUP_CLASSES", "SPA"], members: 2, expected: 215 },
+    { plan: "PREMIUM", extras: ["SPA", "SPECIALIZED_PROGRAM"], members: 3, expected: 412 },
+    { plan: "PREMIUM", extras: ["SPA", "SPECIALIZED_PROGRAM", "PERSONAL_TRAINING"], members: 4, expected: 626 },
+    { plan: "BASIC", extras: ["SPA"], members: 1, expected: -1 },
+    { plan: "GOLD", extras: [], members: 1, expected: -1 },
+    { plan: "BASIC", extras: [], members: 0, expected: -1 },
+  ];
 
-  assert.equal(result.total, 30);
-});
-
-test("STANDARD con PERSONAL_TRAINING cuesta 70", () => {
-  const result = GymCalculator.calculate(
-    "STANDARD",
-    ["PERSONAL_TRAINING"],
-    1
-  );
-
-  assert.equal(result.total, 70);
-});
-
-test("BASIC con SPA es inválido", () => {
-  const result = GymCalculator.calculate("BASIC", ["SPA"], 1);
-
-  assert.equal(result.valid, false);
-  assert.equal(result.total, -1);
-});
-
-describe("R4 descuento grupal", () => {
-  test("con 1 miembro no hay descuento", () => {
-    assert.equal(
-      GymCalculator.calculate("STANDARD", [], 1).total,
-      45
-    );
-  });
-
-  test("con 2 miembros se aplica 10% (90 -> 81)", () => {
-    assert.equal(
-      GymCalculator.calculate("BASIC", ["GROUP_CLASSES"], 2).total,
-      81
-    );
-  });
-
-  test("con 3 miembros se aplica 10% y se redondea half up (121.5 -> 122)", () => {
-    assert.equal(
-      GymCalculator.calculate("BASIC", ["GROUP_CLASSES"], 3).total,
-      122
-    );
-  });
+  for (const row of officialTable) {
+    test(`Plan: ${row.plan}, Extras: [${row.extras.join(", ")}], Members: ${row.members} -> Result: ${row.expected}`, () => {
+      const result = GymCalculator.calculate(row.plan, row.extras, row.members);
+      const actual = result.valid ? result.total : -1;
+      assert.equal(actual, row.expected);
+    });
+  }
 });

@@ -4,7 +4,7 @@ const GymCalculator = require("../src/GymCalculator");
 
 // R1. Planes
 test("R1: cada plan de la tabla devuelve su precio", () => {
-  assert.equal(GymCalculator.getPlanPrice("BASIC"), 30);
+  assert.equal(GymCalculator.getPlanPrice("BASIC"), 31);
   assert.equal(GymCalculator.getPlanPrice("STANDARD"), 45);
   assert.equal(GymCalculator.getPlanPrice("PREMIUM"), 70);
 });

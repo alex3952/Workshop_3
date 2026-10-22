@@ -48,3 +48,48 @@ describe("R4 descuento grupal", () => {
     );
   });
 });
+
+describe("R5 oferta especial", () => {
+  test("monto de 198 (no mayor que 200) no recibe oferta", () => {
+    // (70 + 15 + 25) x 2 = 220 -> 198 tras R4
+    const r = GymCalculator.calculate(
+      "PREMIUM",
+      ["GROUP_CLASSES", "PERSONAL_TRAINING"],
+      2
+    );
+    assert.equal(r.specialDiscount, 0);
+    assert.equal(r.total, 198);
+  });
+
+  test("monto mayor que 200 y hasta 400 resta 20 (306 -> 286)", () => {
+    const r = GymCalculator.calculate(
+      "STANDARD",
+      ["GROUP_CLASSES", "PERSONAL_TRAINING"],
+      4
+    );
+    assert.equal(r.specialDiscount, 20);
+    assert.equal(r.total, 286);
+  });
+
+  test("monto de 396 (no mayor que 400) resta solo 20", () => {
+    // 440 -> 396 tras R4 -> 376
+    const r = GymCalculator.calculate(
+      "PREMIUM",
+      ["GROUP_CLASSES", "PERSONAL_TRAINING"],
+      4
+    );
+    assert.equal(r.specialDiscount, 20);
+    assert.equal(r.total, 376);
+  });
+
+  test("monto mayor que 400 resta solo 50, no 70", () => {
+    // 460 -> 414 tras R4 -> 364 -> x1.15 = 418.6 -> 419
+    const r = GymCalculator.calculate(
+      "PREMIUM",
+      ["GROUP_CLASSES", "SPA"],
+      4
+    );
+    assert.equal(r.specialDiscount, 50);
+    assert.equal(r.total, 419);
+  });
+});

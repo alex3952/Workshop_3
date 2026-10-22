@@ -116,3 +116,32 @@ describe("R9: Tabla oficial de pruebas completa", () => {
     });
   }
 });
+
+describe("R6 recargo premium", () => {
+  test("PREMIUM sin extras premium no tiene recargo", () => {
+    const r = GymCalculator.calculate("PREMIUM", ["GROUP_CLASSES"], 1);
+    assert.equal(r.premiumSurcharge, 0);
+    assert.equal(r.total, 85);
+  });
+
+  test("con un extra premium se suma 15% (100 -> 115)", () => {
+    const r = GymCalculator.calculate("PREMIUM", ["SPA"], 1);
+    assert.ok(Math.abs(r.premiumSurcharge - 15) < 1e-9);
+    assert.equal(r.total, 115);
+  });
+
+  test("con dos extras premium el recargo es uno solo (140 -> 161)", () => {
+    const r = GymCalculator.calculate(
+      "PREMIUM",
+      ["SPA", "SPECIALIZED_PROGRAM"],
+      1
+    );
+    assert.equal(r.total, 161);
+  });
+
+  test("el recargo se aplica después de la oferta (207 -> 187 -> 215)", () => {
+    const r = GymCalculator.calculate("PREMIUM", ["GROUP_CLASSES", "SPA"], 2);
+    assert.equal(r.specialDiscount, 20);
+    assert.equal(r.total, 215);
+  });
+});
